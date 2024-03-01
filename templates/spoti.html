@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #login, #player {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        z-index: 1000;
+      }
+
+      h1 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #1DB954;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+
+      button:hover {
+        background-color: #158c46;
+      }
+
+      button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login">
+      <button id="auth-button">Login with Spotify</button>
+    </div>
+    <div id="player" style="display:none;">
+      <button id="play-button">Play</button>
+      <button id="pause-button">Pause</button>
+      <button id="skip-button">Skip</button>
+    </div>
+    <script>
+      const clientId = 'bdc7e7d7854845c3ae8f7c9966977115';
+      const redirectUri = 'http://127.0.0.1:5000';
+      const scopes = ['user-read-private', 'user-read-email', 'playlist-modify-public'];
+      const authEndpoint = 'https://accounts.spotify.com/authorize';
+      const tokenEndpoint = 'https://accounts.spotify.com/api/token';
+
+      let accessToken = '';
+
+      const authButton = document.getElementById('auth-button');
+      const player = document.getElementById('player');
+      const playButton = document.getElementById('play-button');
+      const pauseButton = document.getElementById('pause-button');
+      const skipButton = document.getElementById('skip-button');
+
+      authButton.addEventListener('click', () => {
+        const authUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token`;
+        window.location.href = authUrl;
+      });
+
+      const hash = window.location.hash;
+      const accessToken = hash.substring(hash.indexOf('=') + 1);
+      if (accessToken) {
+        localStorage.setItem('access_token', accessToken);
+        window.location.href = '/player.html';
+      }
+
+      const Spotify = {
+        setAccessToken: (token) => {
+          accessToken = token;
+        },
+        getAccessToken: () => {
+          return accessToken;
+        },
+        getCurrentTrack: () => {
+          // Make API request to get current track
+        },
+        play: () => {
+          // Make API request to play track
+        },
+        pause: () => {
+          // Make API request to pause track
+        },
+        skipToNext: () => {
+          // Make API request to skip to next track
+        },
+      };
+
+      Spotify.setAccessToken(localStorage.getItem('access_token'));
+
+      playButton.addEventListener('click', () => {
+        Spotify.play();
+      });
+
+      pauseButton.addEventListener('click', () => {
+        Spotify.pause();
+      });
+
+      skipButton.addEventListener('click', () => {
+       

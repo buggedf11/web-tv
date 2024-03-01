@@ -1,0 +1,36 @@
+    <script>
+        // Load the Google Calendar API
+        gapi.load('client', initCalendar);
+
+        function initCalendar() {
+            gapi.client.init({
+                apiKey: 'YOUR_API_KEY',
+                clientId: 'YOUR_CLIENT_ID',
+                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+                scope: 'https://www.googleapis.com/auth/calendar.readonly'
+            }).then(function() {
+                // Make an API call to get the upcoming events
+                gapi.client.calendar.events.list({
+                    'calendarId': 'primary',
+                    'timeMin': (new Date()).toISOString(),
+                    'showDeleted': false,
+                    'singleEvents': true,
+                    'maxResults': 5,
+                    'orderBy': 'startTime'
+                }).then(function(response) {
+                    var events = response.result.items;
+                    var calendarInfo = document.getElementById('calendar-info');
+                    if (events.length > 0) {
+                        calendarInfo.innerHTML = '';
+                        for (var i = 0; i < events.length; i++) {
+                            var event = events[i];
+                            var start = event.start.dateTime || event.start.date;
+                            calendarInfo.innerHTML += '<p>' + start + ' - ' + event.summary + '</p>';
+                        }
+                    } else {
+                        calendarInfo.textContent = 'No upcoming events found.';
+                    }
+                });
+            });
+        }
+    </script>
